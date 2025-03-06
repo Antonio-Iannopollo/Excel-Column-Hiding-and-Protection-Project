@@ -1,0 +1,9 @@
+Private Sub Workbook_Open()
+    Call HideColumnsBasedOnDate
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+    On Error Resume Next
+    ws.Protect Password:="password", UserInterfaceOnly:=True
+    ws.Rows("8:45").Locked = False ' Ensure rows 8 through 45 remain unlocked
+    On Error GoTo 0
+End Sub
