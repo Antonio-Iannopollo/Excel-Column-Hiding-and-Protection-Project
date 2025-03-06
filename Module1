@@ -1,0 +1,45 @@
+Sub HideColumnsBasedOnDate()
+    Dim ws As Worksheet
+    Dim col As Integer
+    Dim cell As Range
+    Dim dateThreshold As Date
+    Dim comparisonDate As Date
+    Dim dateCell As Range
+    Dim lastCol As Long
+    
+    ' Set your worksheet and date threshold
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Ensure "Sheet1" is the correct sheet name
+    dateThreshold = Date ' Change this to your specific date or logic
+    
+    ' Unprotect the sheet
+    On Error Resume Next
+    ws.Unprotect Password:="password" ' Optional: Add a password if the sheet is protected with one
+    On Error GoTo 0
+    
+    ' Protect the entire sheet except for rows 8 through 45
+    ws.Cells.Locked = True ' Lock all cells by default
+    ws.Rows("8:45").Locked = False ' Unlock rows 8 through 45
+    
+    comparisonDate = Date
+    lastCol = ws.Cells(6, ws.Columns.Count).End(xlToLeft).Column
+    
+    ' Loop through a range of columns to hide based on a condition
+    For Each dateCell In ws.Range(ws.Cells(6, 1), ws.Cells(6, lastCol)) ' Adjust this range as needed for your dates
+        If IsDate(dateCell.Value) Then
+            ' If the date is before the comparison date, hide the column
+            If dateCell.Value < comparisonDate Then
+                dateCell.EntireColumn.Hidden = True
+            Else
+                dateCell.EntireColumn.Hidden = False
+            End If
+        End If
+    Next dateCell
+    
+    ' Reprotect the sheet, but leave rows 8 through 45 editable
+    ws.Protect Password:="password", UserInterfaceOnly:=True
+    
+End Sub
+
+Private Sub Workbook_Open()
+    Call HideColumnsBasedOnDate
+End Sub
